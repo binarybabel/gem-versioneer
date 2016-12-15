@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'versioneer'
+puts Versioneer::Git.new(Dir.getwd, {
+    environment: 'production'
+}).to_s
