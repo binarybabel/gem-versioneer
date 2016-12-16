@@ -1,5 +1,6 @@
 # Versioneer
 
+[![Gem Version](https://badge.fury.io/rb/versioneer.svg)](https://badge.fury.io/rb/versioneer)
 [![Build Status](https://travis-ci.org/binarybabel/gem-versioneer.svg?branch=master)](https://travis-ci.org/binarybabel/gem-versioneer)
 [![Build status](https://ci.appveyor.com/api/projects/status/k3i9rbgy2q8xdl78/branch/master?svg=true)](https://ci.appveyor.com/project/babelop/gem-versioneer/branch/master)
 
@@ -7,11 +8,11 @@ __Dynamic project versioning (alpha/beta/rc) from commits since last Git Tag.__
 
 Versioneer **determines a project's version** from the latest source-control tag, then **adjusts automatically** by adding/bumping prereleases based on changes made since the last tagged release.
 
-Integration tested on **UNIX/MacOS and Windows**.
+Integration tested on **UNIX/macOS and Windows**.
 
 ## Overview
 
-#### Non-production environments (default settings)
+#### Non-production environments (default options)
 
 * No changes since last VCS Tag (Ex. v0.1.0)
   - **Same as Tag** `0.1.0`
@@ -21,6 +22,8 @@ Integration tested on **UNIX/MacOS and Windows**.
   - **Minor Bump + Beta** `0.2.beta1`
 * First commit with uncommitted changes
   - **Minor Bump + Alpha2** `0.2.alpha2`
+* Second commit
+  - **Minor Bump + Beta2** `0.2.beta2`
 
 #### In production
 
@@ -28,10 +31,10 @@ Integration tested on **UNIX/MacOS and Windows**.
   - **Same as Tag** `0.1.0`
 * Uncommitted changes
   - **Ignored in Production** `0.1.0`
-* First commit past VCS Tag
-  - **Minor Bump + Release Candidate** `0.2.rc1`
+* Commit(s) past VCS Tag
+  - **Minor Bump + Release Candidate** `0.2.rc1` ...commit... `0.2.rc2`
   - Optionally, patches can be used instead of "rc" in production:
-  - **Minor Bump + Patch** `0.1.1`
+  - **Patch** `0.1.1` ...commit... `0.1.2`
 
 ## Usage
 
