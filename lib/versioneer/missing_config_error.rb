@@ -1,7 +1,7 @@
 require_relative 'runtime_error'
 
 module Versioneer
-  class InvalidRepoError < RuntimeError
+  class MissingConfigError < RuntimeError
 
   end
 end

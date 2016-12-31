@@ -1,7 +1,117 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
+require 'optparse'
 require 'versioneer'
-puts Versioneer::Git.new(Dir.getwd, {
+
+cli_opts = {}
+repo_opts = {
     environment: 'production'
-}).to_s
+}
+
+opparser = OptionParser.new do |opts|
+  opts.banner = [
+      '-------------------------------------',
+      'Usage: versioneer [action] [options]',
+      'Guide: https://git.io/versioneer-help',
+      '-------------------------------------',
+      ' Actions',
+      '    %-33s%s' % ['status', 'Report on versions for all environments (default action)'],
+      '    %-33s%s' % ['print', 'Print version number for production, or --env environment'],
+      '    %-33s%s' % ['init', 'Generate default configuration file'],
+      '    %-33s%s' % ['lock', 'Lock (save) current version (for deployments without VCS repo)'],
+      '    %-33s%s' % ['unlock', 'Unlock (discard) previously saved version'],
+      '',
+      ' Environment Options',
+      '    %-33s%s' % ['VERSIONEER_ENV > RAILS_ENV > RACK_ENV > ENV     (searched in order, default value = production)', ''],
+      '',
+      ' Options',
+  ].join("\n")
+  opts.on('-c FILE', '--config=FILE', 'Config file (.versioneer.yml)') do |v|
+    cli_opts[:config] = v
+  end
+  opts.on('-e ENVIRONMENT', '--env=ENVIRONMENT', 'Environment (production)') do |v|
+    repo_opts[:environment] = v
+  end
+end
+opparser.parse!
+
+if (config_base = cli_opts[:config])
+  unless config_base.match(%r{#{File::SEPARATOR}})
+    config_base = File.join(Dir.getwd, cli_opts[:config])
+  end
+  unless File.exist?(config_base)
+    STDERR.puts("ERROR: Versioneer config file does not exist. (#{config_base})")
+    exit(1)
+  end
+else
+  config_base = Dir.getwd
+end
+
+begin
+  v = Versioneer::Config.new(config_base, repo_opts)
+rescue Versioneer::MissingConfigError => e
+  if cli_opts[:config]
+    # Rethrow missing config error if file given on command-line.
+    raise e
+  else
+    # Use default VCS if config file not given.
+    v = Versioneer.const_get(Versioneer::Config::DEFAULT_TYPE.to_sym).new(Dir.getwd, repo_opts)
+  end
+end
+
+case (cmd = ARGV.shift)
+  when nil, 'status'
+    puts '---------------------------------------------------'
+    puts '%51s' % ["VERSIONEER GEM v#{Versioneer::GEM_VERSION}"]
+    puts '---------------------------------------------------'
+    puts 'Versioneer has calculated the following versions...'
+    if File.exist?(Versioneer::Config::DEFAULT_FILE)
+      puts "* Edit '#{Versioneer::Config::DEFAULT_FILE}' to modify project settings"
+    else
+      puts '* Run `versioneer init` to customize this project'
+    end
+    puts '* Try the --help option for additional commands'
+    puts '---------------------------------------------------'
+    locked = (v.respond_to? :lock_file and File.exist?(v.lock_file)) && '* LOCKED' || ''
+    v.environment = 'development'
+    puts "DEVELOPMENT -> #{v.to_s}    #{locked}"
+    v.environment = 'production'
+    puts " PRODUCTION -> #{v.to_s}    #{locked}"
+  when 'print'
+    puts v.to_s
+  when 'lock'
+    v.lock!
+    puts "+ #{Versioneer::Config::DEFAULT_LOCK}"
+    puts "Locked at version: #{v.to_s}"
+    puts 'Return this version even if the VCS repo is not present.'
+  when 'unlock'
+    v.unlock!
+    puts "- #{Versioneer::Config::DEFAULT_LOCK}"
+    puts "Unlocked. #{v.environment.capitalize} now: #{v.to_s}"
+  when 'init'
+    init_file = Versioneer::Config::DEFAULT_FILE
+    if File.exist?(init_file)
+      STDERR.puts("ERROR: Versioneer config file already exists.")
+      exit(1)
+    end
+    File.open(init_file, 'w') do |file|
+      puts "Generating config..."
+      [
+          "# Versioneer Project Configuration",
+          "# https://git.io/versioneer-help",
+          "",
+          "type: #{Versioneer::Config::DEFAULT_TYPE}",
+          "bump_segment: #{v.bump_segment.to_s}",
+          "prereleases:",
+          "  - alpha",
+          "  - beta",
+          "  - rc",
+      ].each do |line|
+        file.write(line + "\n")
+      end
+      puts "+ #{File.basename(init_file)}"
+    end
+  else
+    puts opparser.help
+end

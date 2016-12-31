@@ -1,7 +1,6 @@
 require 'test_helper'
-require 'versioneer/helpers'
 
-if ENV['TRAVIS_BUILD_NUMBER'] or ENV['APPVEYOR']
+if ci?
   system 'git config --global user.name test'
   system 'git config --global user.email test@example.com'
 end
@@ -128,6 +127,7 @@ class VersioneerGitTest < Minitest::Test
   unless ENV['TRAVIS_BUILD_NUMBER']
     # Travis is packaged with outdated version of git
     #   which does not support sorting tags.
+    # TODO: Update git in CI or find better solution.
     def test_prerelease_tags
       system 'git add .keep && git commit -m Initial'
       system 'git tag -am v0.1 v0.1'

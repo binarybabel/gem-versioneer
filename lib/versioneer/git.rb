@@ -1,7 +1,9 @@
 require_relative 'helpers'
 
 module Versioneer
-  class Git < Base
+  class Git < Repo
+    H = Helpers
+
     def initialize(file_within_repo, options=nil)
       super
       unless file_within_repo.is_a? Dir and Dir.join('.git').exist?
@@ -59,9 +61,5 @@ module Versioneer
       return nil if ref.empty?
       ref
     end
-
-    private
-
-    H = Helpers
   end
 end

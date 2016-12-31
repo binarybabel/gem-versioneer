@@ -1,5 +1,5 @@
 module Versioneer
-  class Base
+  class Repo
     def initialize(file_within_repo, options=nil)
       @file = file_within_repo
       @directory = File.dirname(@file)
@@ -7,7 +7,7 @@ module Versioneer
 
       @bump_segment = :minor
       @prereleases = %w(alpha beta rc)
-      @release_pattern = /^v?([0-9\.]+$)/
+      @release_pattern = /\Av?([0-9\.]+\z)/
       @starting_release = Gem::Version.new('0.0')
 
       if options.is_a? Hash
@@ -18,11 +18,16 @@ module Versioneer
     end
 
     attr_accessor :starting_release,
-                  :bump_segment,
                   :prereleases
 
+    attr_reader :bump_segment
+
+    def bump_segment=(v)
+      @bump_segment = v.to_sym
+    end
+
     def environment
-      @environment || ENV['RAILS_ENV'] || ENV['RACK_ENV'] || ENV['ENV'] || 'development'
+      @environment || ENV['VERSIONEER_ENV'] || ENV['RAILS_ENV'] || ENV['RACK_ENV'] || ENV['ENV'] || 'development'
     end
 
     attr_writer :environment
