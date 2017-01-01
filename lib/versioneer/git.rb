@@ -47,14 +47,23 @@ module Versioneer
         ref
       else
         # Iterate through tags in date order for first match.
-        `git for-each-ref --sort='-*creatordate' --format '%(objecttype)=%(refname)'`.split("\n").each do |line|
-          type, ref = line.chomp.split('=')
-          ref_name = ref.split('/').last
+        if H.windows?
+          `git tag --sort=-*creatordate`.split("\n").each do |tag|
+            if tag.match(release_pattern)
+              return tag
+            end
+          end
+        else
+          `git for-each-ref --sort='-*creatordate' --format '%(objecttype)=%(refname)'`.split("\n").each do |line|
+            type, ref = line.chomp.split('=')
+            ref_name = ref.split('/').last
 
-          if type == 'tag' and ref_name.match(release_pattern)
-            return ref_name
+            if type == 'tag' and ref_name.match(release_pattern)
+              return ref_name
+            end
           end
         end
+        nil
       end
     end
 

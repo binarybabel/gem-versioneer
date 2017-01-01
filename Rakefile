@@ -11,13 +11,13 @@ task :default => :test
 
 load 'changelog.rake'
 
-task :build do
+task :relock do
   system './bin/versioneer unlock > /dev/null'
   system './bin/versioneer lock'
   puts '...'
   puts "Preparing to build Gem version #{`./bin/versioneer print`}..."
   puts 'Press Ctrl-C now to cancel'
   system 'sleep 5'
-  puts '...'
-  exec 'gem build versioneer.gemspec'
 end
+
+Rake::Task[:build].enhance [:relock]
