@@ -18,8 +18,10 @@ end
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 # (Re)load instead of require to ensure coverage.
-load 'versioneer.rb'
-load 'versioneer/helpers.rb'
+silence_warnings do
+  load 'versioneer.rb'
+  load 'versioneer/helpers.rb'
+end
 
 require 'minitest/autorun'
 require 'fileutils'

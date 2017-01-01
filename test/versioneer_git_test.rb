@@ -124,16 +124,45 @@ class VersioneerGitTest < Minitest::Test
     end
   end
 
-  unless ENV['TRAVIS_BUILD_NUMBER']
-    # Travis is packaged with outdated version of git
-    #   which does not support sorting tags.
-    # TODO: Update git in CI or find better solution.
-    def test_prerelease_tags
-      system 'git add .keep && git commit -m Initial'
-      system 'git tag -am v0.1 v0.1'
-      system 'git commit --allow-empty -m Second'
-      system 'git tag -am v0.2-rc1 v0.2-rc1'
-      assert_equal '0.1', @q.release.to_s
-    end
+  def test_tag_search_non_alphabetical
+    system 'git add .keep && git commit -m Initial'
+    system 'git tag -am v0.2 v0.2'
+    sleep(1) # ensure next tag has different timestamp
+
+    system 'git commit --allow-empty -m Second'
+    system 'git tag -am v0.4 v0.4'
+    sleep(1)
+
+    system 'git commit --allow-empty -m Third'
+    system 'git tag -am v0.3 v0.3'
+    sleep(1)
+
+    system 'git commit --allow-empty -m Fourth'
+    system 'git tag -am v0.1-rc1 v0.1-rc1'
+    sleep(1)
+
+    # v0.3 is the commit-recent tag matching the release pattern,
+    #   but intentionally not the next alphabetically.
+    assert_equal '0.3', @q.release.to_s
+  end
+
+  def test_tag_search_commit_order
+    system 'git add .keep && git commit -m Initial'
+    sleep(1) # ensure next tag has different timestamp
+    system 'git commit --allow-empty -m Second'
+    sleep(1)
+    system 'git commit --allow-empty -m Third'
+    sleep(1)
+    system 'git commit --allow-empty -m Fourth'
+    sleep(1)
+
+    system 'git tag -am v0.1-rc1 v0.1-rc1'
+    system 'git tag -a v0.2 HEAD~3 -m v0.2'
+    system 'git tag -a v0.3 HEAD^ -m v0.3'
+    system 'git tag -a v0.4 HEAD~2 -m v0.4'
+
+    # v0.2 is the commit-recent tag matching the release pattern,
+    #   but intentionally not the most recent tag added.
+    assert_equal '0.3', @q.release.to_s
   end
 end
