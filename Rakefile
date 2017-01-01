@@ -9,6 +9,8 @@ end
 
 task :default => :test
 
+load 'changelog.rake'
+
 task :build do
   system './bin/versioneer unlock > /dev/null'
   system './bin/versioneer lock'

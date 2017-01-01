@@ -14,52 +14,76 @@ Integration tested on **UNIX/macOS and Windows**.
 
 ## Overview
 
-#### Non-production environments (default options)
+Project versions update automatically based on VCS changes and where the code has been deployed. The table below depicts the default settings; the prerelease workflow is customizable through code or a project config file.
 
-* No changes since last VCS Tag (Ex. v0.1.0)
-  - **Same as Tag** `0.1.0`
-* Uncommitted changes
-  - **Minor Bump + Alpha** `0.2.alpha1`
-* First commit
-  - **Minor Bump + Beta** `0.2.beta1`
-* First commit with uncommitted changes
-  - **Minor Bump + Alpha2** `0.2.alpha2`
-* Second commit
-  - **Minor Bump + Beta2** `0.2.beta2`
-
-#### In production
-
-* No changes since last VCS Tag (Ex. v0.1.0)
-  - **Same as Tag** `0.1.0`
-* Uncommitted changes
-  - **Ignored in Production** `0.1.0`
-* Commit(s) past VCS Tag
-  - **Minor Bump + Release Candidate** `0.2.rc1` ...commit... `0.2.rc2`
-  - Optionally, patches can be used instead of "rc" in production:
-  - **Patch** `0.1.1` ...commit... `0.1.2`
+| VCS State | Last Tag/Release | Development Ver. | Production Ver. |
+| --- | --- | --- | --- |
+| No changes since last tag | v0.1.0 | `0.1.0` *Same as Tag* | `0.1.0` *Same as Tag* |
+| Uncommitted changes | v0.1.0 | `0.2.alpha1` | `0.1.0` *Same as Tag* |
+| First commit | v0.1.0 | `0.2.beta1` | `0.2.rc1` **or** `0.1.1` |
+| First commit + Changes | v0.1.0 | `0.2.alpha2` | `0.2.rc1` **or** `0.1.1` |
+| Second commit | v0.1.0 | `0.2.beta2` | `0.2.rc2` **or** `0.1.2` |
+| Tag previous commit | v0.2.0 | `0.2.0` | `0.2.0` |
 
 ## Usage
 
-### Ruby Project (Rails, Rack, etc.)
+* [Configuration options are documented in the Wiki.](https://github.com/binarybabel/gem-versioneer/wiki)
+* The Versioneer environment is selected from the following system variables:
+   * _Any value other than "production" is assumed to be "development"_
 
-TODO
+```
+ENV['VERSIONEER_ENV'] || ENV['RAILS_ENV'] || ENV['RACK_ENV'] || ENV['ENV']
+```
 
 ### Command-Line
 
-CLI usage defaults to "production" mode, unless otherwise given by ENV variable.
+CLI usage defaults to "production" mode.
 
 ```
 $ git tag -am 'Release 0.1' v0.1
-
+...
 $ versioneer
 0.1
-
+...
 $ git commit --allow-empty -m 'Some changes.'
-
-$versioneer
+...
+$ versioneer
 0.2.rc1
+...
+$ versioneer --help
 ```
 
+### Ruby Project (Rails, Rack, etc.)
+
+* Add Versioneer to your Gemfile
+
+```
+gem 'versioneer', '~> 0.1'
+...
+$ bundle install
+```
+
+* Generate a config file
+
+```
+$ bundle exec versioneer init
+...
+Generating config
++ .versioneer.yml
+```
+
+* Modify your project's version variable
+
+```
+require 'versioneer'
+module MyApp
+  VERSION = Versioneer::Config.new(Rails.root).version.to_s
+end
+```
+
+## Settings & Customization
+
+**[Check out the Versioneer Wiki for more information](https://github.com/binarybabel/gem-versioneer/wiki)**
 
 ## Contributing
 

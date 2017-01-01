@@ -10,6 +10,8 @@ module Versioneer
     DEFAULT_LOCK = 'version.lock'
 
     def initialize(base_dir_or_config_file, repo_options=nil)
+      base_dir_or_config_file = base_dir_or_config_file.to_s
+
       if Dir.exist?(base_dir_or_config_file)
         @config_base = base_dir_or_config_file
         @config_file = File.join(base_dir_or_config_file, DEFAULT_FILE)
