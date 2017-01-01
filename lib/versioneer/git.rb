@@ -33,7 +33,8 @@ module Versioneer
     end
 
     def filesystem_dirty?
-      H.lines? `git status -s`
+      system 'git diff-index --quiet HEAD --'
+      $?.exitstatus != 0
     end
 
     protected

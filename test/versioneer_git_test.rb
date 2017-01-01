@@ -65,7 +65,7 @@ class VersioneerGitTest < Minitest::Test
     assert_equal '0.0', @q.release.to_s
     assert_equal '0.1.beta2', @q.version.to_s
     # Become dirty
-    system 'touch a'
+    system 'touch a && git add a'
     assert @q.filesystem_dirty?
     assert_equal '0.1.alpha3', @q.version.to_s
     # Production
@@ -84,7 +84,7 @@ class VersioneerGitTest < Minitest::Test
     assert_equal '0.5', @q.release.to_s
     assert_equal '0.5', @q.version.to_s
     # Become dirty
-    system 'touch a'
+    system 'touch a && git add a'
     assert_equal '0.6.alpha1', @q.version.to_s
     # Production
     @q.environment = 'production'
