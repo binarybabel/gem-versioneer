@@ -3,6 +3,8 @@
 [![Gem Version](https://badge.fury.io/rb/versioneer.svg)](https://badge.fury.io/rb/versioneer)
 [![Build Status](https://travis-ci.org/binarybabel/gem-versioneer.svg?branch=master)](https://travis-ci.org/binarybabel/gem-versioneer)
 [![Build status](https://ci.appveyor.com/api/projects/status/k3i9rbgy2q8xdl78/branch/master?svg=true)](https://ci.appveyor.com/project/babelop/gem-versioneer/branch/master)
+[![Code Climate](https://codeclimate.com/github/binarybabel/gem-versioneer/badges/gpa.svg)](https://codeclimate.com/github/binarybabel/gem-versioneer)
+[![Test Coverage](https://codeclimate.com/github/binarybabel/gem-versioneer/badges/coverage.svg)](https://codeclimate.com/github/binarybabel/gem-versioneer/coverage)
 
 __Dynamic project versioning (alpha/beta/rc) from commits since last Git Tag.__
 

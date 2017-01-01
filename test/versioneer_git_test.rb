@@ -1,6 +1,6 @@
 require 'test_helper'
 
-if ci?
+if test_ci?
   system 'git config --global user.name test'
   system 'git config --global user.email test@example.com'
 end
