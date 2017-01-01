@@ -7,5 +7,5 @@
 /pkg/
 /spec/reports/
 /tmp/
-/.versioneer.yml
+/*.gem
 /version.lock

@@ -44,7 +44,7 @@ class VersioneerConfigTest < Minitest::Test
   def test_invalid_type
     configure(type: 'anothervcs')
     assert_raises Versioneer::RuntimeError do
-      build
+      build.version
     end
   end
 
@@ -61,6 +61,7 @@ class VersioneerConfigTest < Minitest::Test
     @q.commits_since_release = 1
     assert_equal '1.1', @q.version.to_s
     @q.unlock!
+    @q.commits_since_release = 1
     refute_equal '1.1', @q.version.to_s
   end
 
@@ -75,7 +76,7 @@ class VersioneerConfigTest < Minitest::Test
   def test_version_lock_invalid_repo
     configure(release: '1.3', invalid: true)
     assert_raises Versioneer::InvalidRepoError do
-      build
+      build.version
     end
     configure(release: '1.3')
     build.lock!

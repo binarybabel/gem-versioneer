@@ -75,20 +75,20 @@ case (cmd = ARGV.shift)
     puts '---------------------------------------------------'
     locked = (v.respond_to? :lock_file and File.exist?(v.lock_file)) && '* LOCKED' || ''
     v.environment = 'development'
-    puts "DEVELOPMENT -> #{v.to_s}    #{locked}"
+    puts "DEVELOPMENT -> #{v}    #{locked}"
     v.environment = 'production'
-    puts " PRODUCTION -> #{v.to_s}    #{locked}"
+    puts " PRODUCTION -> #{v}    #{locked}"
   when 'print'
     puts v.to_s
   when 'lock'
-    v.lock!
+    v.lock!(ARGV.shift)
     puts "+ #{Versioneer::Config::DEFAULT_LOCK}"
-    puts "Locked at version: #{v.to_s}"
-    puts 'Return this version even if the VCS repo is not present.'
+    puts "Locked at version: #{v}"
+    puts 'Will output this version without querying VCS.'
   when 'unlock'
     v.unlock!
     puts "- #{Versioneer::Config::DEFAULT_LOCK}"
-    puts "Unlocked. #{v.environment.capitalize} now: #{v.to_s}"
+    puts "Unlocked. #{v.environment.capitalize} now: #{v}"
   when 'init'
     init_file = Versioneer::Config::DEFAULT_FILE
     if File.exist?(init_file)
@@ -102,7 +102,7 @@ case (cmd = ARGV.shift)
           "# https://git.io/versioneer-help",
           "",
           "type: #{Versioneer::Config::DEFAULT_TYPE}",
-          "bump_segment: #{v.bump_segment.to_s}",
+          "bump_segment: #{v.bump_segment}",
           "prereleases:",
           "  - alpha",
           "  - beta",

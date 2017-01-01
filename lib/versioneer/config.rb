@@ -25,40 +25,41 @@ module Versioneer
 
       params = YAML.load_file(@config_file)
       raise RuntimeError, "Failed to parse YAML file. (#{@config_file})" unless params
-      params = params.inject({}){|x,(k,v)| x[k.to_sym] = v; x}
-
-      repo_type = DEFAULT_TYPE
-      if params[:type]
-        repo_type = params.delete(:type).capitalize.to_sym
-        raise RuntimeError, "Versioneer::#{repo_type} does not exist." unless ::Versioneer.const_defined? repo_type
-      end
-
-      repo_class = Versioneer.const_get(repo_type)
-      raise RuntimeError, "Versioneer::#{repo_type} is invalid." unless repo_class.superclass == Versioneer::Repo
+      params = params.inject({}) { |x, (k, v)| x[k.to_sym] = v; x } # symbolize keys
 
       @lock_file = File.join(@config_base, params.delete(:lock_file) || DEFAULT_LOCK)
-
-      repo_options ||= Hash.new
-      repo_options.merge!(params)
-
-      begin
-        @repo = repo_class.new(@config_base, repo_options)
-      rescue RuntimeError => e
-        if locked?
-          @repo = Bypass.new(@config_base, release: version)
-        else
-          raise e
-        end
-      end
+      @repo = nil
+      @repo_type = (params.delete(:type) || DEFAULT_TYPE).capitalize.to_sym
+      @repo_options = Hash.new().merge(repo_options.to_h).merge(params.to_h)
     end
 
-    attr_reader :repo, :config_file, :lock_file
+    attr_reader :config_file, :lock_file
+
+    def repo
+      return @repo unless @repo.nil?
+      @repo = case locked?
+                when true
+                  Bypass.new(@config_base, release: version)
+                else
+                  unless ::Versioneer.const_defined? @repo_type
+                    raise RuntimeError, "Versioneer::#{@repo_type} is an unknown VCS type."
+                  end
+
+                  repo_class = ::Versioneer.const_get(@repo_type)
+                  unless repo_class.superclass == ::Versioneer::Repo
+                    raise RuntimeError, "Versioneer::#{@repo_type} is an invalid VCS type."
+                  end
+
+                  @repo = repo_class.new(@config_base, @repo_options)
+              end
+    end
 
     def locked?
       File.exist?(@lock_file)
     end
 
     def lock!(version=nil)
+      @repo = nil
       version ||= repo.to_s
       raise RuntimeError, 'Cannot lock. Version neither given nor detected.' if version.to_s.empty?
       File.open(@lock_file, 'w') do |file|
@@ -67,6 +68,7 @@ module Versioneer
     end
 
     def unlock!
+      @repo = nil
       if File.exist?(@lock_file)
         File.delete(@lock_file)
       end
@@ -86,11 +88,16 @@ module Versioneer
     end
 
     def method_missing(name, *args, &block)
-      if @repo.respond_to? name
-        @repo.send(name, *args, &block)
+      if repo.respond_to? name
+        repo.send(name, *args, &block)
       else
         super
       end
+    end
+
+    def respond_to?(name)
+      return true if repo.respond_to? name
+      super
     end
   end
 end

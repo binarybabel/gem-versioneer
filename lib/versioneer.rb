@@ -1,11 +1,11 @@
-require 'versioneer/gem_version'
-require 'versioneer/runtime_error'
-require 'versioneer/invalid_repo_error'
-require 'versioneer/missing_config_error'
-require 'versioneer/repo'
-require 'versioneer/config'
-require 'versioneer/bypass'
-require 'versioneer/git'
+load 'versioneer/runtime_error.rb'
+load 'versioneer/invalid_repo_error.rb'
+load 'versioneer/missing_config_error.rb'
+load 'versioneer/repo.rb'
+load 'versioneer/config.rb'
+load 'versioneer/bypass.rb'
+load 'versioneer/git.rb'
+load 'versioneer/gem_version.rb'
 
 module Versioneer
 end
