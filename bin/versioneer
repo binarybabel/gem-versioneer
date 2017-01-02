@@ -83,7 +83,8 @@ case (cmd = ARGV.shift)
     puts " PRODUCTION -> #{v}    #{locked}"
   when 'print'
     puts v.to_s
-  when 'lock'
+  when 'lock', 'relock'
+    v.unlock! if cmd == 'relock'
     v.lock!(ARGV.shift)
     unless cli_opts[:quiet]
       puts "+ #{Versioneer::Config::DEFAULT_LOCK}"

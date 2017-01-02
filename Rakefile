@@ -11,12 +11,10 @@ task :default => :test
 
 load 'changelog.rake'
 
-task :relock do
-  ENV['VERSIONEER_ENV'] = 'development'
-  system './bin/versioneer unlock > /dev/null'
-  system './bin/versioneer lock'
+task :versioneer do
+  system './bin/versioneer relock'
 end
 
-Rake::Task[:build].enhance [:relock] do
-  system './bin/versioneer unlock > /dev/null'
+Rake::Task[:build].enhance [:versioneer] do
+  system './bin/versioneer unlock -q'
 end
