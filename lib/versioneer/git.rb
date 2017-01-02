@@ -6,9 +6,9 @@ module Versioneer
 
     def initialize(file_within_repo, options=nil)
       super
-      unless file_within_repo.is_a? Dir and Dir.join('.git').exist?
+      unless Dir.exist?(File.join(file_within_repo, '.git'))
         unless H.lines? `git ls-files #{file_within_repo} --error-unmatch #{H.cl_no_stderr}`
-          raise InvalidRepoError, 'Not a git repo.'
+          raise InvalidRepoError, "Not inside a Git repo. (#{file_within_repo})"
         end
       end
     end

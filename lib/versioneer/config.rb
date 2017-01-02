@@ -16,13 +16,13 @@ module Versioneer
         @config_base = base_dir_or_config_file
         @config_file = File.join(base_dir_or_config_file, DEFAULT_FILE)
         unless File.exist?(@config_file)
-          raise MissingConfigError, "#{self.class.name} file does not exist. (#{@config_file})"
+          raise MissingConfigError, "Versioneer config file does not exist. (#{@config_file})"
         end
       elsif File.exist?(base_dir_or_config_file)
         @config_file = base_dir_or_config_file
         @config_base = File.dirname(@config_file)
       else
-        raise RuntimeError, "#{self.class.name} file does not exist. (#{base_dir_or_config_file})"
+        raise RuntimeError, "Versioneer base path does not exist. (#{base_dir_or_config_file})"
       end
 
       params = YAML.load_file(@config_file)
