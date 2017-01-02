@@ -27,7 +27,9 @@ Project versions update automatically based on VCS changes and where the code ha
 
 ## Usage
 
-* [Configuration options are documented in the Wiki.](https://github.com/binarybabel/gem-versioneer/wiki)
+* Available from [Command-Line](#command-line) or [Ruby](#ruby-project-rails-rack-rubygem-etc)
+* Project-level configuration using a `.versioneer.yml` file
+  * [Wiki Documentation](https://github.com/binarybabel/gem-versioneer/wiki)
 * The Versioneer environment is selected from the following system variables:
    * _Any value other than "production" is assumed to be "development"_
 
@@ -37,23 +39,23 @@ ENV['VERSIONEER_ENV'] || ENV['RAILS_ENV'] || ENV['RACK_ENV'] || ENV['ENV']
 
 ### Command-Line
 
-CLI usage defaults to "production" mode.
-
 ```
-$ git tag -am 'Release 0.1' v0.1
-...
-$ versioneer
+$ git tag -am 'Release' v0.1
+$ versioneer print
 0.1
 ...
 $ git commit --allow-empty -m 'Some changes.'
-...
-$ versioneer
-0.2.rc1
+$ versioneer status
+DEVELOPMENT -> 0.2.beta1    
+ PRODUCTION -> 0.2.rc1    
 ...
 $ versioneer --help
 ```
 
-### Ruby Project (Rails, Rack, etc.)
+### Ruby Project (Rails, Rack, RubyGem, etc.)
+
+Generic installation, adapt as necessary. See the
+[Versioneer Wiki](https://github.com/binarybabel/gem-versioneer/wiki) for more.
 
 * Add Versioneer to your Gemfile
 
@@ -75,15 +77,18 @@ Generating config
 * Modify your project's version variable
 
 ```
+$ vim config/version.rb
+
 require 'versioneer'
 module MyApp
-  VERSION = Versioneer::Config.new(Rails.root).version.to_s
+  # Configure versioneer with the project's root path:
+  VERSION = Versioneer::Config.new(File.expand_path('../../', __FILE__)).to_s
 end
 ```
 
 ## Settings & Customization
 
-**[Check out the Versioneer Wiki for more information](https://github.com/binarybabel/gem-versioneer/wiki)**
+**[Please refer to the Versioneer Wiki for full documentation.](https://github.com/binarybabel/gem-versioneer/wiki)**
 
 ## Contributing
 
