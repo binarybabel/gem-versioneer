@@ -33,6 +33,9 @@ opparser = OptionParser.new do |opts|
   opts.on('-e ENVIRONMENT', '--env=ENVIRONMENT', 'Environment (production)') do |v|
     repo_opts[:environment] = v
   end
+  opts.on('-q', '--quiet', 'Silence action output') do |v|
+    cli_opts[:quiet] = true
+  end
 end
 opparser.parse!
 
@@ -82,12 +85,16 @@ case (cmd = ARGV.shift)
     puts v.to_s
   when 'lock'
     v.lock!(ARGV.shift)
-    puts "+ #{Versioneer::Config::DEFAULT_LOCK}"
-    puts "Version: #{v}"
+    unless cli_opts[:quiet]
+      puts "+ #{Versioneer::Config::DEFAULT_LOCK}"
+      puts "Version: #{v}"
+    end
   when 'unlock'
     v.unlock!
-    puts "- #{Versioneer::Config::DEFAULT_LOCK}"
-    puts "#{v.environment.capitalize} version now: #{v}"
+    unless cli_opts[:quiet]
+      puts "- #{Versioneer::Config::DEFAULT_LOCK}"
+      puts "#{v.environment.capitalize} version now: #{v}"
+    end
   when 'init'
     init_file = Versioneer::Config::DEFAULT_FILE
     if File.exist?(init_file)
@@ -95,7 +102,7 @@ case (cmd = ARGV.shift)
       exit(1)
     end
     File.open(init_file, 'w') do |file|
-      puts "Generating config..."
+      puts "Generating config..." unless cli_opts[:quiet]
       [
           "# Versioneer Project Configuration",
           "# https://git.io/versioneer-help",
@@ -109,7 +116,7 @@ case (cmd = ARGV.shift)
       ].each do |line|
         file.write(line + "\n")
       end
-      puts "+ #{File.basename(init_file)}"
+      puts "+ #{File.basename(init_file)}" unless cli_opts[:quiet]
     end
   else
     puts opparser.help
