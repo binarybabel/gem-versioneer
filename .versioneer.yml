@@ -3,7 +3,7 @@
 
 type: Git
 bump_segment: minor
+environment: development
 prereleases:
   - alpha
-  - beta
   - beta

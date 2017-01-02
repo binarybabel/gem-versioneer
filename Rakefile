@@ -12,12 +12,11 @@ task :default => :test
 load 'changelog.rake'
 
 task :relock do
+  ENV['VERSIONEER_ENV'] = 'development'
   system './bin/versioneer unlock > /dev/null'
   system './bin/versioneer lock'
-  puts '...'
-  puts "Preparing to build Gem version #{`./bin/versioneer print`}..."
-  puts 'Press Ctrl-C now to cancel'
-  system 'sleep 5'
 end
 
-Rake::Task[:build].enhance [:relock]
+Rake::Task[:build].enhance [:relock] do
+  system './bin/versioneer unlock > /dev/null'
+end

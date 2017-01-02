@@ -83,12 +83,11 @@ case (cmd = ARGV.shift)
   when 'lock'
     v.lock!(ARGV.shift)
     puts "+ #{Versioneer::Config::DEFAULT_LOCK}"
-    puts "Locked at version: #{v}"
-    puts 'Will output this version without querying VCS.'
+    puts "Version: #{v}"
   when 'unlock'
     v.unlock!
     puts "- #{Versioneer::Config::DEFAULT_LOCK}"
-    puts "Unlocked. #{v.environment.capitalize} now: #{v}"
+    puts "#{v.environment.capitalize} version now: #{v}"
   when 'init'
     init_file = Versioneer::Config::DEFAULT_FILE
     if File.exist?(init_file)
