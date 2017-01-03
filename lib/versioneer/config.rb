@@ -32,7 +32,7 @@ module Versioneer
       @lock_file = File.join(@config_base, params.delete(:lock_file) || DEFAULT_LOCK)
       @repo = nil
       @repo_type = (params.delete(:type) || DEFAULT_TYPE).capitalize.to_sym
-      @repo_options = Hash.new().merge(repo_options.to_h).merge(params.to_h)
+      @repo_options = Hash.new().merge(params.to_h).merge(repo_options.to_h)
     end
 
     attr_reader :config_file, :lock_file
