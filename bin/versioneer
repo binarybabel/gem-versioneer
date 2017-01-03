@@ -4,9 +4,7 @@ require 'optparse'
 require 'versioneer'
 
 cli_opts = {}
-repo_opts = {
-    environment: 'production'
-}
+repo_opts = {}
 
 opparser = OptionParser.new do |opts|
   opts.banner = [
@@ -16,7 +14,7 @@ opparser = OptionParser.new do |opts|
       '-------------------------------------',
       ' Actions',
       '    %-33s%s' % ['status', 'Report on versions for all environments (default action)'],
-      '    %-33s%s' % ['print', 'Print version number for production, or --env environment'],
+      '    %-33s%s' % ['print', 'Print version number for current environment'],
       '    %-33s%s' % ['init', 'Generate default configuration file'],
       '    %-33s%s' % ['lock', 'Lock (save) current version (for deployments without VCS repo)'],
       '    %-33s%s' % ['unlock', 'Unlock (discard) previously saved version'],
@@ -26,10 +24,10 @@ opparser = OptionParser.new do |opts|
       '',
       ' Options',
   ].join("\n")
-  opts.on('-c FILE', '--config=FILE', 'Config file (.versioneer.yml)') do |v|
+  opts.on('-c FILE', '--config=FILE', 'Config file, default: .versioneer.yml') do |v|
     cli_opts[:config] = v
   end
-  opts.on('-e ENVIRONMENT', '--env=ENVIRONMENT', 'Environment (production)') do |v|
+  opts.on('-e ENVIRONMENT', '--env=ENVIRONMENT', '(development|production) ... overrides system vars, see guide') do |v|
     repo_opts[:environment] = v
   end
   opts.on('-q', '--quiet', 'Silence action output') do |v|
