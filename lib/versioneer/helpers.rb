@@ -26,22 +26,22 @@ module Versioneer
 
       def cl_no_stdout
         {
-            unix: '>/dev/null',
-            windows: '>nul'
+            :unix => '>/dev/null',
+            :windows => '>nul'
         }.fetch(platform)
       end
 
       def cl_no_stderr
         {
-            unix: '2>/dev/null',
-            windows: '2>nul'
+            :unix => '2>/dev/null',
+            :windows => '2>nul'
         }.fetch(platform)
       end
 
       def cl_silence
         {
-            unix: '>/dev/null 2>&1',
-            windows: '>nul 2>&1'
+            :unix => '>/dev/null 2>&1',
+            :windows => '>nul 2>&1'
         }.fetch(platform)
       end
 

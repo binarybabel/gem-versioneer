@@ -10,11 +10,11 @@ class VersioneerGitTest < Minitest::Test
 
   def setup
     Dir.chdir(File.join(File.dirname(__FILE__), 'repo'))
-    raise 'Unknown git directory detected in test/repo.' if Dir.exist?('.git')
+    raise 'Unknown git directory detected in test/repo.' if File.directory?('.git')
     `git init && git add .keep && git config user.name test && git config user.email test@example.com`
     @git_created = true
     @q = Versioneer::Git.new(File.join(Dir.getwd, '.keep'), {
-        environment: 'development'
+        :environment => 'development'
     })
   end
 

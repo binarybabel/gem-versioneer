@@ -1,4 +1,4 @@
-require_relative 'helpers'
+require File.dirname(File.expand_path(__FILE__)) + '/helpers'
 
 module Versioneer
   class Bypass < Repo

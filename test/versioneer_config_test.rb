@@ -42,19 +42,19 @@ class VersioneerConfigTest < Minitest::Test
   end
 
   def test_invalid_type
-    configure(type: 'anothervcs')
+    configure(:type => 'anothervcs')
     assert_raises Versioneer::RuntimeError do
       build.version
     end
   end
 
   def test_release
-    configure(release: '1.0')
+    configure(:release => '1.0')
     assert_equal '1.0', build.release.to_s
   end
 
   def test_version_lock
-    configure(release: '1.1')
+    configure(:release => '1.1')
     build
     assert_equal '1.1', @q.version.to_s
     @q.lock!
@@ -66,7 +66,7 @@ class VersioneerConfigTest < Minitest::Test
   end
 
   def test_version_lock_manual
-    configure(release: '1.2')
+    configure(:release => '1.2')
     build
     assert_equal '1.2', @q.version.to_s
     @q.lock!('1.1')
@@ -74,18 +74,18 @@ class VersioneerConfigTest < Minitest::Test
   end
 
   def test_version_lock_invalid_repo
-    configure(release: '1.3', invalid: true)
+    configure(:release => '1.3', :invalid => true)
     assert_raises Versioneer::InvalidRepoError do
       build.version
     end
-    configure(release: '1.3')
+    configure(:release => '1.3')
     build.lock!
-    configure(release: '1.4', invalid: true)
+    configure(:release => '1.4', :invalid => true)
     assert_equal '1.3', build.version.to_s
   end
 
   def test_other_version_file
-    configure({release: '2.0'}, 2)
+    configure({:release => '2.0'}, 2)
     @q = Versioneer::Config.new(File.join(File.dirname(__FILE__), 'repo', OTHER_FILE))
     assert_equal '2.0', @q.version.to_s
   end

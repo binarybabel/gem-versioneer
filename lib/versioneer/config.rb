@@ -1,6 +1,6 @@
-require_relative 'helpers'
-require_relative 'runtime_error'
-require_relative 'missing_config_error'
+require File.dirname(File.expand_path(__FILE__)) + '/helpers'
+require File.dirname(File.expand_path(__FILE__)) + '/runtime_error'
+require File.dirname(File.expand_path(__FILE__)) + '/missing_config_error'
 require 'yaml'
 
 module Versioneer
@@ -11,8 +11,9 @@ module Versioneer
 
     def initialize(base_dir_or_config_file, repo_options=nil)
       base_dir_or_config_file = base_dir_or_config_file.to_s
+      repo_options = Hash.new unless repo_options.is_a? Hash
 
-      if Dir.exist?(base_dir_or_config_file)
+      if File.directory?(base_dir_or_config_file)
         @config_base = base_dir_or_config_file
         @config_file = File.join(base_dir_or_config_file, DEFAULT_FILE)
         unless File.exist?(@config_file)
@@ -32,7 +33,7 @@ module Versioneer
       @lock_file = File.join(@config_base, params.delete(:lock_file) || DEFAULT_LOCK)
       @repo = nil
       @repo_type = (params.delete(:type) || DEFAULT_TYPE).capitalize.to_sym
-      @repo_options = Hash.new().merge(params.to_h).merge(repo_options.to_h)
+      @repo_options = Hash.new().merge(params).merge(repo_options)
     end
 
     attr_reader :config_file, :lock_file
@@ -41,7 +42,7 @@ module Versioneer
       return @repo unless @repo.nil?
       @repo = case locked?
                 when true
-                  Bypass.new(@config_base, release: version)
+                  Bypass.new(@config_base, :release => version)
                 else
                   unless ::Versioneer.const_defined? @repo_type
                     raise RuntimeError, "Versioneer::#{@repo_type} is an unknown VCS type."

@@ -10,7 +10,7 @@ __Dynamic project versioning (alpha/beta/rc) from commits since last Git Tag.__
 
 Versioneer **determines a project's version** from the latest source-control tag, then **adjusts automatically** by adding/bumping prereleases based on changes made since the last tagged release.
 
-Integration tested on **UNIX/macOS and Windows**.
+Integration tested on **UNIX/macOS and Windows**. Matrix testing for **Ruby** ` 1.8` — `2.3`
 
 ## Overview
 

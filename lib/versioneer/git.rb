@@ -1,4 +1,4 @@
-require_relative 'helpers'
+require File.dirname(File.expand_path(__FILE__)) + '/helpers'
 
 module Versioneer
   class Git < Repo
@@ -6,7 +6,7 @@ module Versioneer
 
     def initialize(file_within_repo, options=nil)
       super
-      unless Dir.exist?(File.join(file_within_repo, '.git'))
+      unless File.directory?(File.join(file_within_repo, '.git'))
         unless H.lines? `git ls-files #{file_within_repo} --error-unmatch #{H.cl_no_stderr}`
           raise InvalidRepoError, "Not inside a Git repo. (#{file_within_repo})"
         end

@@ -1,11 +1,15 @@
-load 'versioneer/runtime_error.rb'
-load 'versioneer/invalid_repo_error.rb'
-load 'versioneer/missing_config_error.rb'
-load 'versioneer/repo.rb'
-load 'versioneer/config.rb'
-load 'versioneer/bypass.rb'
-load 'versioneer/git.rb'
-load 'versioneer/gem_version.rb'
+%w{
+  runtime_error
+  invalid_repo_error
+  missing_config_error
+  repo
+  config
+  bypass
+  git
+  gem_version
+}.each do |f|
+  load "#{File.dirname(File.expand_path(__FILE__))}/versioneer/#{f}.rb"
+end
 
 module Versioneer
 end

@@ -11,7 +11,7 @@ def test_ci?
   ENV['TRAVIS_BUILD_NUMBER'] or ENV['APPVEYOR']
 end
 
-if test_ci?
+if RUBY_VERSION > '2' and test_ci?
   require 'simplecov'
   SimpleCov.start
 end
@@ -25,4 +25,3 @@ end
 
 require 'minitest/autorun'
 require 'fileutils'
-require 'pry' unless test_ci?
